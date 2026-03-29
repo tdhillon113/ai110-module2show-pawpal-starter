@@ -52,3 +52,21 @@ PawPal+ now supports:
 - lightweight conflict detection with warning messages instead of crashes (`Scheduler.detect_potential_conflicts` and `Scheduler.detect_scheduled_conflicts`)
 
 Use `main.py` to verify these features with out-of-order tasks and same-time task conflicts.
+
+## Testing PawPal+
+
+Run the test suite with:
+
+```bash
+python -m pytest
+```
+
+The tests cover:
+
+- Task completion state transition and recurrence behavior
+- Task addition to owner and sorting correctness by preferred start hour
+- Task filtering by completion status and pet
+- Scheduler conflict detection for same start times and overlapping intervals
+
+Confidence Level: ⭐⭐⭐⭐⭐ (5/5 stars)
+
