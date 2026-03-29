@@ -26,8 +26,8 @@ The Scheduler class is responsible for too many things: retrieving tasks, organi
 
 **b. Tradeoffs**
 
-- Describe one tradeoff your scheduler makes.
-- Why is that tradeoff reasonable for this scenario?
+- The scheduler currently checks for exact start-time overlaps and preferred-hour collisions but does not deeply model partial overlaps in a real-time timeline (e.g., task A 08:00-08:30 and task B 08:15-08:45 are still considered separately unless we manually detect them in conflict logic). This keeps the implementation lightweight and easy to understand, but it means some conflict cases may not be resolved optimally.
+- This tradeoff is reasonable for a prototype where simplicity and fast iteration are more valuable than perfect scheduling. In a production version, we would upgrade to interval trees or a dedicated calendar library for robust conflict handling.
 
 ---
 
