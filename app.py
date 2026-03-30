@@ -126,14 +126,70 @@ if st.button("Add Pet"):
 st.divider()
 
 st.subheader("Build Schedule")
-st.caption("This button should call your scheduling logic once you implement it.")
+st.caption("Use scheduling logic and see sorted/filtered tasks plus conflict warnings.")
 
-if st.button("Generate schedule"):
-    if st.session_state.owner is not None and st.session_state.owner.tasks:
+if st.session_state.owner and st.session_state.owner.tasks:
+    # Sort Options
+    st.markdown("### Sort & Filter")
+    sort_button = st.button("Show sorted task list")
+
+    filter_status = st.selectbox("Filter by completion", ["all", "incomplete", "complete"], index=0)
+    pet_options = [pet.name for pet in st.session_state.owner.pets]
+    selected_pet = st.selectbox("Filter by pet", ["all"] + pet_options, index=0)
+
+    if sort_button:
         scheduler = Scheduler(st.session_state.owner)
+        sorted_tasks = scheduler.sort_tasks_by_time(st.session_state.owner.tasks)
+        st.subheader("Tasks sorted by preferred start time")
+        st.table([
+            {
+                "Task": t.name,
+                "Pet": t.pet.name,
+                "Start Hour": f"{t.preferred_start_hour}:00",
+                "Priority": t.priority.name,
+                "Done": t.is_completed,
+            }
+            for t in sorted_tasks
+        ])
+
+    # Apply filters
+    completed_filter = None
+    if filter_status == "incomplete":
+        completed_filter = False
+    elif filter_status == "complete":
+        completed_filter = True
+
+    selected_pet_obj = None
+    if selected_pet != "all":
+        selected_pet_obj = next((p for p in st.session_state.owner.pets if p.name == selected_pet), None)
+
+    scheduler = Scheduler(st.session_state.owner)
+    filtered_tasks = scheduler.filter_tasks(st.session_state.owner.tasks, completed=completed_filter, pet=selected_pet_obj)
+
+    st.subheader("Filtered tasks")
+    if filtered_tasks:
+        st.table([
+            {
+                "Task": t.name,
+                "Pet": t.pet.name,
+                "Start": f"{t.preferred_start_hour}:00",
+                "Priority": t.priority.name,
+                "Done": t.is_completed,
+            }
+            for t in filtered_tasks
+        ])
+    else:
+        st.info("No tasks match this filter.")
+
+    if st.button("Generate schedule"):
         plan = scheduler.generate_plan()
         st.subheader("Generated Schedule")
         st.code(plan.to_summary())
-        st.success("Schedule generated!")
-    else:
-        st.warning("Create an owner and add tasks first.")
+        if plan.conflicts:
+            st.warning("Conflict warnings detected:")
+            for conflict in plan.conflicts:
+                st.warning(conflict)
+        else:
+            st.success("No conflicts detected. Schedule is clean!")
+else:
+    st.warning("Create an owner and add tasks first.")

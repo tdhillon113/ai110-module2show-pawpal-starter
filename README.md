@@ -22,6 +22,19 @@ Your final app should:
 - Display the plan clearly (and ideally explain the reasoning)
 - Include tests for the most important scheduling behaviors
 
+## Features
+
+- Sorting by priority and preferred start time (`Scheduler.sort_tasks_by_time`)
+- Filtering by pet and completion status (`Scheduler.filter_tasks`)
+- Daily/weekly recurrence support with automated task regeneration (`Scheduler.mark_task_complete`)
+- Time-based task due checks (`Task.is_due`)
+- Lightweight conflict detection with non-fatal warnings:
+  - potential overload at same preferred hour
+  - same pet duplicate time slot
+  - overlapping scheduled windows
+- Clean summary output and daily feasibility check (`DailyPlan.to_summary`, `DailyPlan.is_feasible`)
+- Streamlit UI integration showing sorted/filtered tasks and real-time conflict warnings
+
 ## Getting started
 
 ### Setup
@@ -70,3 +83,5 @@ The tests cover:
 
 Confidence Level: ⭐⭐⭐⭐⭐ (5/5 stars)
 
+DEMO
+<a href="/course_images/ai110/your_screenshot_name.png" target="_blank"><img src='/course_images/ai110/UI.png' title='PawPal App' width='' alt='PawPal App' class='center-block' /></a>.

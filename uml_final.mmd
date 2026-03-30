@@ -1,0 +1,75 @@
+%% UaB: PawPal+ Final UML
+classDiagram
+    class Owner {
+        +String name
+        +String email
+        +float available_hours
+        +time wake_time
+        +time sleep_time
+        +List~Pet~ pets
+        +List~Task~ tasks
+        +add_task(task: Task) void
+        +remove_task(task: Task) void
+        +filter_tasks(pet: Pet, completed: bool, priority: Priority) List~Task~
+    }
+
+    class Pet {
+        +String name
+        +String species
+        +String breed
+        +int age
+        +summary() String
+    }
+
+    class Task {
+        +String task_id
+        +String name
+        +Pet pet
+        +String category
+        +int duration_min
+        +Priority priority
+        +Frequency frequency
+        +bool is_completed
+        +int preferred_start_hour
+        +Date due_date
+        +mark_complete() void
+        +is_due(current_time: DateTime) bool
+    }
+
+    class ScheduledTask {
+        +Task task
+        +time start_time
+        +String reason
+        +bool skipped
+    }
+
+    class DailyPlan {
+        +Date date
+        +List~ScheduledTask~ items
+        +int total_duration
+        +List~String~ conflicts
+        +is_feasible() bool
+        +to_summary() String
+    }
+
+    class Scheduler {
+        +Owner owner
+        +float available_hours
+        +time wake_time
+        +time sleep_time
+        +generate_plan() DailyPlan
+        +sort_tasks_by_time(tasks: List~Task~) List~Task~
+        +filter_tasks(tasks: List~Task~, completed: bool, pet: Pet) List~Task~
+        +mark_task_complete(task: Task) void
+        +detect_potential_conflicts() List~String~
+        +detect_scheduled_conflicts(plan: DailyPlan) void
+    }
+
+    Owner "1" o-- "1..*" Pet : owns
+    Owner "1" o-- "0..*" Task : owns
+    Pet "1" o-- "0..*" Task : has
+    Scheduler ..> Owner : depends on
+    Scheduler ..> Task : evaluates
+    Scheduler ..> DailyPlan : produces
+    DailyPlan "1" o-- "1..*" ScheduledTask : contains
+    ScheduledTask ..> Task : references
